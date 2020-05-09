@@ -1,0 +1,37 @@
+(function () {
+        let openDelay = false;
+        Vue.directive('operone', function (el, binding) {
+            el.onclick = function (e) {
+                if (openDelay) return;
+                openDelay = !openDelay;
+                if (!binding.value) {
+                    alert("传入项目id格式错误！");
+                    return;
+                }
+                let func = binding.value['func'];
+                let time = binding.value['time'];
+                if (typeof time !== 'number') {
+                    alert("传入等待时间错误");
+                    return;
+                }
+                let args = [];
+                for (const key in binding.value) {
+                    if (binding.value.hasOwnProperty(key)) {
+                        if (key === 'func' || key === 'time') continue;
+                        args.push(binding.value[key])
+                    }
+                }
+                setTimeout(() => {
+                    openDelay = !openDelay;
+                }, time);
+                func(...args);
+            }
+        })
+    })();
+    /**
+     * 多长时间内只允许点击一次 
+     * @param {String} func 方法名称
+     * @param {number} time 延迟时间
+     * @param {*} item 方法所需参数
+     */
+    <button class="my-btns" v-operone='{func:bindBtnEventSave,time:1000,item:item}'>保存</button>
